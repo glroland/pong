@@ -15,6 +15,7 @@
 	<description>Pong WebSocket Server</description>
 	<properties>
 		<java.version>11</java.version>
+		<version.infinispan>12.1.7.Final</version.infinispan>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -26,6 +27,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.infinispan</groupId>
+			<artifactId>infinispan-spring-boot-starter-embedded</artifactId>
+			<version>${version.infinispan}</version>
 		</dependency>
 	</dependencies>
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { w3cwebsocket as W3CWebSocket } from "websocket";
 import './App.css';
 
 export const PADDLE_WIDTH = 120;
@@ -8,6 +9,7 @@ export const BALL_VELOCITY = 5;
 export const BALL_RADIUS = 10;
 export const GAME_GOD_MODE = true;
 export const PADDLE_KEY_BUMP = 75;
+export const WS_ENABLE = true;
 
 class PongGame extends Component {
     
@@ -58,6 +60,35 @@ class PongGame extends Component {
         setInterval(this.gameLoop, REFRESH_MS);
 
         console.log("Let the game of Pong begin!");
+
+        this.wsClient = null;
+        if (WS_ENABLE)
+        {
+            this.wsClient = new W3CWebSocket('ws://127.0.0.1:8080/');
+            this.wsClient.onopen = () => {
+                console.log('WebSocket Client Connected');
+            };
+            this.wsClient.onerror = function() {
+                console.log('Connection Error');
+            };
+            this.wsClient.onmessage = this.handleWebSocketMessage;
+        }
+    }
+
+    handleWebSocketMessage = (message) => {
+        console.log(message);
+    }
+
+    sendWebSocketBallMove() {
+        if (this.wsClient.readyState === this.wsClient.OPEN) {
+            this.wsClient.send("Ball Moved");
+        }
+    }
+
+    sendWebSocketPaddleMove() {
+        if (this.wsClient.readyState === this.wsClient.OPEN) {
+            this.wsClient.send("Paddle Moved");
+        }
     }
 
     handleCursor = (e) => {
@@ -67,6 +98,8 @@ class PongGame extends Component {
 
         // this render is redundant but does increase the refresh rate/frame rate
         this.renderCanvas();
+
+        this.sendWebSocketPaddleMove();
     }
 
     handleKeyDown = (e) => {
@@ -77,6 +110,8 @@ class PongGame extends Component {
             x = this.state.playerTopX - PADDLE_KEY_BUMP;
             if (x < 0)
                 x = 0;
+
+            this.sendWebSocketPaddleMove();
         }
         else if((e.key === 'd') || (e.key === 'D'))
         {
@@ -230,7 +265,9 @@ class PongGame extends Component {
                             ballIncDirection: dir,
                             ballIncX: incX,
                             winner: winner })
-          );
+        );
+        
+        this.sendWebSocketBallMove();
     }
 
     drawPaddle(context, playerX, playerY) {
