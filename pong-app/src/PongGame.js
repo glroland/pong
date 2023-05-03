@@ -64,7 +64,7 @@ class PongGame extends Component {
         this.wsClient = null;
         if (WS_ENABLE)
         {
-            this.wsClient = new W3CWebSocket('ws://127.0.0.1:8080/');
+            this.wsClient = new W3CWebSocket('ws://127.0.0.1:8080/game/123');
             this.wsClient.onopen = () => {
                 console.log('WebSocket Client Connected');
             };
