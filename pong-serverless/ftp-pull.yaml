@@ -24,5 +24,9 @@
     - loop:
         simple: ${body.size}
         steps:
-        - log:
-            message: CSV_Row[${exchange.getProperty("CamelLoopIndex")}] - ${body[${exchange.getProperty("CamelLoopIndex")}]}
+        - choice:
+            when:
+            - simple: ${exchange.getProperty("CamelLoopIndex")} > 0
+              steps:
+              - log:
+                  message: CSV_Row[${exchange.getProperty("CamelLoopIndex")}] - ${body[${exchange.getProperty("CamelLoopIndex")}]}
