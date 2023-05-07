@@ -1,0 +1,5 @@
+- from:
+    uri: direct:update-purchase
+    steps:
+    - log:
+        message: Purchase Received - ${body}

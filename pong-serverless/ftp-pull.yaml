@@ -1,0 +1,28 @@
+- from:
+    uri: sftp://server.home.glroland.com:/batch
+    parameters:
+      useUserKnownHostsFile: false
+      download: true
+      password: r3dh@t123
+      antInclude: '**/*.csv'
+      throwExceptionOnConnectFailed: true
+      initialDelay: 0
+      recursive: true
+      knownHostsFile: known_hosts
+      passiveMode: true
+      username: ftp
+    steps:
+    - log:
+        message: File_Body - ${body}
+        logging-level: info
+    - convert-body-to:
+        type: java.lang.String
+    - unmarshal:
+        csv: {}
+    - log:
+        message: CSV_Headers - ${body[0]} === ${body.size()}
+    - loop:
+        simple: ${body.size}
+        steps:
+        - log:
+            message: CSV_Row[${exchange.getProperty("CamelLoopIndex")}] - ${body[${exchange.getProperty("CamelLoopIndex")}]}
