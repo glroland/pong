@@ -81,13 +81,25 @@ class PongGame extends Component {
 
     sendWebSocketBallMove() {
         if (this.wsClient.readyState === this.wsClient.OPEN) {
-            this.wsClient.send("Ball Moved");
+            const e = {eventType: "Update", objectType: "Ball", x: this.state.ballX, y: this.state.ballY};
+            const json = JSON.stringify(e);
+            this.wsClient.send(json);
         }
     }
 
-    sendWebSocketPaddleMove() {
+    sendWebSocketPaddleTopMove() {
         if (this.wsClient.readyState === this.wsClient.OPEN) {
-            this.wsClient.send("Paddle Moved");
+            const e = {eventType: "Update", objectType: "PaddleTop", x: this.state.playerTopX, y: 0};
+            const json = JSON.stringify(e);
+            this.wsClient.send(json);
+        }
+    }
+
+    sendWebSocketPaddleBottomMove() {
+        if (this.wsClient.readyState === this.wsClient.OPEN) {
+            const e = {eventType: "Update", objectType: "PaddleBottom", x: this.state.playerBottomX, y: this.state.height - PADDLE_HEIGHT};
+            const json = JSON.stringify(e);
+            this.wsClient.send(json);
         }
     }
 
@@ -99,7 +111,7 @@ class PongGame extends Component {
         // this render is redundant but does increase the refresh rate/frame rate
         this.renderCanvas();
 
-        this.sendWebSocketPaddleMove();
+        this.sendWebSocketPaddleBottomMove();
     }
 
     handleKeyDown = (e) => {
@@ -111,7 +123,7 @@ class PongGame extends Component {
             if (x < 0)
                 x = 0;
 
-            this.sendWebSocketPaddleMove();
+            this.sendWebSocketPaddleTopMove();
         }
         else if((e.key === 'd') || (e.key === 'D'))
         {
